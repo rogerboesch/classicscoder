@@ -23,4 +23,4 @@ All very valid reasons but there also more serious benefits to learn with a Retr
 
 1. [Commando](https://github.com/rogerboesch/classicscoder/blob/master/zxspectrum/basic-listings/COMMANDO-JUMP.BAS)
 2. [Spectrum Invaders](https://github.com/rogerboesch/classicscoder/blob/master/zxspectrum/basic-listings/SPECTRUM-INVADERS.BAS)
-3. [Spectrum Ball (Demo)](https://github.com/rogerboesch/classicscoder/blob/master/zxspectrum/basic-listings/SPECTRUM-BALL.BAS)
+3. [ZX Ball (Demo)](https://github.com/rogerboesch/classicscoder/blob/master/zxspectrum/basic-listings/SPECTRUM-BALL.BAS)
