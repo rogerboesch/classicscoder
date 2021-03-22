@@ -1,5 +1,5 @@
 # The Classics Coder
-Content and Tutorials to use in conjunction [The Classics Coder App](http://classicscoder.com/classics-coder-zx.html)
+Content and Tutorials to use in conjunction with [The Classics Coder App](http://classicscoder.com/classics-coder-zx.html)
 
 In the 80s (mostly) everyone had a Home Computer. And at that time it means you have to learn how to code and read some books to use it. At least a little bit of BASIC. It’s without any doubt one of the reasons this time brought up some of the most famous programmers!
 
