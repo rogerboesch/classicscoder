@@ -1,0 +1,403 @@
+ 10 REMark ANT HILL
+ 20 MODE 8
+ 25 WINDOW 512,256,0,0
+ 26 title
+ 30 init_graph
+ 35 REPeat game
+ 36  init
+ 50  draw_scene
+ 60  REPeat main
+ 70   one_move
+ 80   if TIME_UP OR HIT OR HOME THEN EXIT main
+ 85   delay
+ 90  END REPeat main
+100  end_game
+110  IF AGAIN=FALSE THEN EXIT game
+120 END REPeat game
+130 INK 0
+140	PAPER 7
+150	CLS
+199 STOP
+
+350 DEFine PROCedure init_graph
+360  DATA -5245,-10109,-7806,-11646
+370  DATA -6783,1665,2,0,8769,8316
+380  DATA 0,0,9264,18432,8834,-11524,128
+390  DATA 22664,-20228,32,26350,28672,20085
+400  do_graph=RESPR(100)
+410  RESTORE 360
+420  FOR I=do_graph TO do_graph+22*2 STEP 2
+430   READ B
+440   POKE_W I,B
+450  END FOR I
+520  C_TAB=RESPR(32*12)
+530  def_graph 0,3,0,0,14,15,63,31,51,68,132
+540  def_graph 1,3,0,3,20,216,252,168,192,64,16
+550  def_graph 2,3,0,0,112,248,252,248,204,34,33
+560  def_graph 3,3,0,192,40,27,63,25,3,4,8
+570  def_graph 4,6,0,24,24,126,24,60,102,195,195
+580  def_graph 5,4,0,1,1,3,3,7,7,15,15
+590  def_graph 6,4,0,31,31,63,63,127,127,255,255
+600  def_graph 7,4,0,128,128,192,192,224,224,240,240
+610  def_graph 8,4,0,248,248,252,252,254,254,255,255
+620  def_graph 9,0,0,255,255,255,255,255,255,255,255
+630  def_graph 10,1,1,255,255,255,255,255,255,255,255
+640  def_graph 11,6,1,24,24,126,24,60,102,195,195
+650  FALSE=0
+660  TRUE=1
+670  AGAIN=TRUE
+699 END DEFine init_graph
+
+1000 DEFine PROCedure init
+1050  RANDOMISE
+1060  XM%=RND(0 TO 20)+10
+1070  YM%=2
+1080  DIM A%(4,3),A1%(4,2)
+1090  FOR I=0 TO 4
+1100   A%(I,1)=RND(0 TO 10)+10
+1110   A%(I,2)=(I+1)*5+2
+1120   A%(I,3)=1
+1130   A1%(I,1)=0:A1%(I,2)=1
+1135   IF RND>0.5 THEN reverse I
+1140  END FOR I
+1160  AGAIN=FALSE
+1170  HIT=FALSE
+1180  HOME=FALSE
+1190  TIME_UP=FALSE
+1299 END DEFine init
+
+1300 DEFine PROCedure def_graph(S%,F%,B%,R0%,R1%,R2%,R3%,R4%,R5%,R6%,R7%)
+1310  LOCal A,FH%,FL%,BH%,BL%
+1320  A=C_TAB+32*S%
+1330  FH%=(F% DIV 4)*2
+1340  FL%=F% && 3
+1350  BH%=(B% DIV 4)*2
+1360  BL%=B% && 3
+1370  charline(R0%)
+1380  charline(R1%)
+1390  charline(R2%)
+1400  charline(R3%)
+1410  charline(R4%)
+1420  charline(R5%)
+1430  charline(R6%)
+1440  charline(R7%)
+1499 END DEFine def_graph
+
+1500 DEFine PROCedure charline(R%)
+1502  LOCal M%,J,I,DL%,DH%
+1503  M%=128
+1504  FOR J=1 TO 2
+1505   DL%=0:DH%=0
+1510   FOR I=1 TO 4
+1520    IF (R% && M%)=M% THEN
+1530     DL%=FH%+DL%*4
+1540     DH%=FL%+DH%*4
+1550    ELSE
+1560     DL%=BH%+DL%*4
+1570     DH%=BL%+DH%*4
+1580    END IF
+1590    M%=M% DIV 2
+1600   END FOR I
+1610   POKE A,DL%
+1620   POKE A+1,DH%
+1630   A=A+2
+1640  END FOR J
+1699 END DEFine charline
+
+1700 DEFine PROCedure graph(X%,Y%,S%)
+1710  CALL do_graph,X%,Y%,S%,C_TAB
+1799 END DEFine graph
+
+2000 DEFine PROCedure draw_scene
+2010  PAPER 2
+2020  CLS
+2040  FOR X=0 TO 31
+2050   graph X,7,9
+2060   graph X,12,9
+2070   graph X,17,9
+2080   graph X,22,9
+2090   graph X,27,9
+2100  END FOR X
+2120  FOR Y=0 TO 2
+2125   FOR X=0 TO 31
+2130    graph X,Y,10
+2135   END FOR X
+2140  END FOR Y
+2160  shafts 2,3,6
+2170  shafts 1,8,11
+2180  shafts 2,13,16
+2190  shafts 1,18,21
+2200  shafts 2,22,26
+2220  graph XM%,YM%,11
+2240  graph 1,26,5:graph 2,26,7
+2250  graph 1,27,6:graph 2,27,8
+2270  FOR I=0 TO 4
+2280   graph A%(I,1),A%(I,2),A1%(I,1)
+2285   graph A%(I,1)+1,A%(I,2),A1%(I,2)
+2290  END FOR I
+2300  SDATE 2000,1,1,0,0,0
+2999 END DEFine draw_scene
+
+3000 DEFine PROCedure move_ant
+3020  Q%=RND(1 TO 5)-1
+3030  graph A%(Q%,1),A%(Q%,2),9:graph A%(Q%,1)+1,A%(Q%,2),9
+3040  IF RND<5E-2 THEN reverse Q%
+3050  A%(Q%,1)=A%(Q%,1)+A%(Q%,3)*2
+3060  IF A%(Q%,1)<10 THEN
+3061   A%(Q%,1) = 10
+3062   reverse Q%
+3065  END IF
+3070  IF A%(Q%,1)>20 THEN
+3071   A%(Q%,1)=20
+3072   reverse Q%
+3075  END IF
+3080  graph A%(Q%,1),A%(Q%,2),A1%(Q%,1)
+3085  graph A%(Q%,1)+1,A%(Q%,2),A1%(Q%,2)
+3090  HIT=got_man(Q%)
+3099 END DEFine move_ant
+
+3500 DEFine PROCedure reverse(Q%)
+3510  IF A1%(Q%,1)=3 THEN
+3520   A1%(Q%,1)=0
+3525   A1%(Q%,2)=1
+3530  ELSE
+3540   A1%(Q%,1)=3
+3545   A1%(Q%,2)=2
+3550  END IF
+3560  A%(Q%,3)=-A%(Q%,3)
+3599 END DEFine reverse
+
+4000 DEFine PROCedure one_move
+4010  move_man
+4020  IF HIT=FALSE THEN
+4030   move_ant
+4040   get_time
+4050  END IF
+4099 END DEFine one_move
+
+4500 DEFine PROCedure get_time
+4510  TIME$=DATE$
+4520  SEC=TIME$(17)*60
+4530  SEC=SEC+TIME$(19 TO 20)
+4550  IF SEC>MAX THEN TIME_UP=TRUE
+4999 END DEFine get_time
+
+5000 DEFine PROCedure move_man
+5001  LOCal I%
+5003  I%=KEYROW(1)
+5004  IF I%=0 THEN END DEFine move_man
+5010  IF YM%>4 THEN
+5015   graph XM%,YM%,9
+5020  ELSE
+5022   graph XM%,YM%,10
+5025  END IF
+5060  IF I%=2 AND XM%>1 THEN XM%=XM%-1
+5070  IF I%=16 AND XM%<30 THEN XM%=XM%+1
+5080  IF I%=128 AND pix(YM%+1,XM%,1,1)=0 THEN down_shaft
+5090  IF pix(YM%,XM%,4,4)=3 THEN
+5095   HIT=TRUE
+5096   Q%=(YM%-2)/5-1
+5098  END IF
+5100  IF YM%>4 THEN
+5102   graph XM%,YM%,4
+5104  ELSE
+5106   graph XM%,YM%,11
+5107  END IF
+5110  IF XM%=3 AND YM%=27 THEN HOME=TRUE
+5199 END DEFine move_man
+
+5500 DEFine PROCedure down_shaft
+5520  FOR i=1 TO 4
+5530   YM%=YM%+1
+5540   graph XM%,YM%,4
+5550   BEEP 0.1,YM%
+5560   graph XM%,YM%,9
+5570  END FOR I
+5575  YM%=YM%+1
+5580  BEEP
+5599 END DEFine down_shaft
+
+5600 DEFine PROCedure find_shafts(Y%)
+5610  X%=0
+5620  REPeat find1
+5630   COL=pix(Y%+1,X%,1,1)
+5640   X1%=X%
+5650   X%=X%+1
+5660   IF X%>28 OR COL=0 THEN EXIT find1
+5670  END REPeat find1
+5680  X2%=0
+5690  REPeat find2
+5700   COL=pix(Y%+1,X%,1,1)
+5705   IF COL=0 THEN X2%=X%
+5710   X%=X%+1
+5720   IF X%>28 OR COL=0 THEN EXIT find2
+5730  END REPeat find2
+5799 END DEFine find_shafts
+
+5800 DEFine PROCedure drag(X%)
+5810  IF A%(Q%,1)+2=X% THEN XM%=X%: END DEFine drag
+5820  IF SGN(X%-A%(Q%,1)-2)<>A%(Q%,3) THEN reverse Q%
+5830  REPeat goto_shaft
+5840   graph A%(Q%,1),A%(Q%,2),9
+5845   graph A%(Q%,1)+1,A%(Q%,2),9
+5848   graph A%(Q%,1)+2,A%(Q%,2),9
+5850   A%(Q%,1)=A%(Q%,1)+A%(Q%,3)
+5860   graph A%(Q%,1),A%(Q%,2),A1%(Q%,1)
+5863   graph A%(Q%,1)+1,A%(Q%,2),A1%(Q%,2)
+5866   graph A%(Q%,1)+2,A%(Q%,2),4
+5870   delay
+5880   IF A%(Q%,1)+2=X% THEN EXIT goto_shaft
+5890  END REPeat goto_shaft
+5895  XM%=X%
+5899 END DEFine drag
+
+5900 DEFine PROCedure goto_man(Q%)
+5910  IF A%(Q%,1)+1=XM% THEN END DEFine goto_man
+5920  IF SGN(XM%-A%(Q%,1)-1)<>A%(Q%,3) THEN reverse Q%
+5930  REPeat mve_ant
+5940   graph A%(Q%,1),A%(Q%,2),9
+5945   graph A%(Q%,1)+1,A%(Q%,2),9
+5950   A%(Q%,1)=A%(Q%,1)+A%(Q%,3)
+5960   graph A%(Q%,1),A%(Q%,2),A1%(Q%,1)
+5970   graph A%(Q%,1)+1,A%(Q%,2),A1%(Q%,2)
+5975   delay
+5980   IF A%(Q%,1)+1=XM% THEN EXIT mve_ant
+5990  END REPeat mve_ant
+5999 END DEFine goto_man
+
+6000 DEFine PROCedure end_game
+6010  IF HIT THEN
+6012   capture
+6014  ELSE
+6020   IF TIME_UP THEN
+6022    hatch
+6024   ELSE
+6030    IF HOME THEN
+6032     destroy_nest
+6040    END IF
+6050   END IF
+6060  END IF
+6100  REPeat an_game
+6110  AT 24,3
+6112  PRINT "Another game Y/N ?";
+6114  INPUT N$
+6120  IF N$(1)="Y" THEN AGAIN=TRUE
+6199 END DEFine end_game
+
+6200 DEFine PROCedure capture
+6210  AT 23,3: PRINT "You are captured!"
+6220  REPeat ant
+6230   IF Q%=4 THEN EXIT ant
+6240   goto_man(Q%)
+6250   find_shafts A%(Q%,2)
+6260   IF ABS(X2%-A%(Q%,1))<ABS(X1%-A%(Q%,1)) AND X2%<> 0 THEN
+6262    drag X2%
+6264   ELSE
+6266    drag X1%
+6268   END IF
+6270   graph A%(Q%,1)+2,A%(Q%,2),9
+6275   graph A%(Q%,1)+3,A%(Q%,2),9
+6280   BEEP 0.1,-10
+6290   down_shaft
+6300   graph XM%,YM%,4
+6310   Q%=Q%+1
+6320  END REPeat ant
+6330  goto_man(Q%)
+6340  drag 5
+6399 END DEFine capture
+
+6500 DEFine PROCedure hatch
+6510  AT 23,3:PRINT "THE ANTS ARE HATCHING "
+6520  FOR I=1 TO RND(0 TO 20)+20
+6530   X=RND(0 TO 25)+5
+6532   Y=RND(0 TO 15)+5
+6535   T%=RND(0 TO 4)
+6540   graph X,Y,A1%(T%,1)
+6545   graph X+1,Y,A1%(T%,2)
+6550   BEEP 0.1,I
+6555   PAUSE 1
+6560  END FOR I
+6570  BEEP
+6599 END DEFine hatch
+
+6800 DEFine PROCedure destroy_nest
+6810  AT 23,2:PRINT "YOU DIT IT"
+6815  RESTORE 6900
+6820  REPeat tune
+6830   READ D,P
+6840   IF D=999 THEN EXIT tune
+6850   BEEP D,P
+6860   PAUSE D*125
+6865   BEEP
+6870  END REPeat tune
+6900  DATA 0.1,14,0.1,13
+6910  DATA 0.1,12,0.1,11
+6920  DATA 0.2,10,0.2,10
+6990  DATA 999,999
+6999 END DEFine destroy_nest
+
+8000 DEFine PROCedure title
+8010  BORDER 0:INK 6: PAPER 0: CLS
+8020  AT 3,14:PRINT "A N T  H I L L"
+8040  AT 7,3:PRINT "In this game you have a fixed "
+8050  PRINT TO 2;"amount of time to destroy the ants"
+8060  PRINT TO 2;"nest before the ants hatch!"
+8070  PRINT TO 2;"BEWARE: the soldier ants guarding the"
+8080  PRINT TO 2;"tunnels will capture you and take you"
+8090  PRINT TO 2;"to the nest to feed the youngs!"
+8100  PRINT TO 2;"Good Luck!"
+8200  REPeat diff
+8300   AT 18,5:PRINT "Which difficulty level -"
+8310   PRINT TO 3;"1. Expert, 2> Medium or 3. Novice ";
+8320   INPUT DF
+8330   IF DF>0 AND DF<4 THEN EXIT diff
+8335  END REPeat diff
+8340  MAX=(20+DF*10)
+8350  AT 22,15
+8360  FLASH 1
+8370  PRINT "Please wait"
+8380  FLASH 0
+8399 END DEFine title
+
+8400 DEFine PROCedure shafts(NO,Y1,Y2)
+8410  X1%=RND(1 TO 4)+9:X2%=RND(0 TO 4)+16
+8420  FOR Y=Y1 TO Y2
+8430   IF NO=1 THEN graph INT((X1%+X2%)/2),Y,9
+8440   IF NO=2 THEN graph X1%,Y,9:graph X2%,Y,9
+8450  END FOR Y
+8499 END DEFine shafts
+
+8500 DEFine FuNction got_man(Q%)
+8510  IF A%(Q%,2)<>YM% THEN RETurn FALSE
+8520  IF A%(Q%,1)<>XM% AND A%(Q%,1)+1<>XM% THEN RETurn FALSE
+8530  RETurn TRUE
+8599 END DEFine got_man
+
+8600 DEFine PROCedure delay
+8610  PAUSE 5
+8699 END DEFine delay
+
+8700 DEFine FuNction SGN(N%)
+8710  IF N%=0 THEN
+8715   RETurn 0
+8716  ELSE
+8720   IF N%<0 THEN
+8725    RETurn -1
+8730   ELSE
+8740    RETurn 1
+8750   END IF
+8760  END IF
+8699 END DEFine SGN
+
+9500 DEFine FuNction pix(R%,C%,X%,Y%)
+9510  LOCal A%,P%,B%,A
+9520  P%=C%*8+X%
+9530  A=131072+(512*R%+Y%*64+P% DIV 4)*2
+9540  B%=PEEK(A+1)
+9550  A%=PEEK(A)
+9560  P%=P% MOD 4
+9570  IF P%=3 THEN RETurn ((2 && A%)*2)+(3 && B%)
+9580  IF P%=2 THEN RETurn ((8 && A%) DIV 2)+((12 && B%) DIV 4)
+9590  IF P%=1 THEN RETurn ((32 && A%) DIV 8)+((48 && B%) DIV 16)
+9600  IF P%=0 THEN RETurn ((128 && A%) DIV 32)+((192 && B%) DIV 64)
+9699 END DEFine pix
